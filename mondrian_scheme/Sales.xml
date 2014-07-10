@@ -1,0 +1,46 @@
+<Schema name="Sales">
+  <Cube name="Sales" visible="true" cache="false" enabled="true">
+    <Table name="sales_details" schema="public" alias="">
+    </Table>
+    <Dimension type="StandardDimension" visible="true" foreignKey="no" name="Store">
+      <Hierarchy name="Store" visible="true" hasAll="true" primaryKey="no" primaryKeyTable="sales">
+        <Join leftKey="store" rightKey="id">
+          <Table name="sales" schema="public" alias="">
+          </Table>
+          <Table name="store_city" schema="public" alias="">
+          </Table>
+        </Join>
+        <Level name="City" visible="true" table="store_city" column="no" nameColumn="city_name" uniqueMembers="false">
+        </Level>
+        <Level name="Store" visible="true" table="store_city" column="id" nameColumn="name" uniqueMembers="false">
+        </Level>
+      </Hierarchy>
+    </Dimension>
+    <Dimension type="StandardDimension" visible="true" foreignKey="no" name="Member">
+      <Hierarchy name="Member" visible="true" hasAll="true" primaryKey="no" primaryKeyTable="sales">
+        <Join leftKey="member" rightAlias="" rightKey="id">
+          <Table name="sales" schema="public" alias="">
+          </Table>
+          <Table name="customer_city" schema="public" alias="">
+          </Table>
+        </Join>
+        <Level name="CIty" visible="true" table="customer_city" column="no" nameColumn="city_name" uniqueMembers="false">
+        </Level>
+        <Level name="Member" visible="true" table="customer_city" column="id" nameColumn="name" uniqueMembers="false">
+        </Level>
+      </Hierarchy>
+    </Dimension>
+    <Dimension type="StandardDimension" visible="true" foreignKey="product" name="Product">
+      <Hierarchy name="Product" visible="true" hasAll="true">
+        <Table name="product_master" schema="public" alias="">
+        </Table>
+        <Level name="Product" visible="true" column="id" nameColumn="name" uniqueMembers="false">
+        </Level>
+      </Hierarchy>
+    </Dimension>
+    <Measure name="Sum" column="count" aggregator="sum" visible="true">
+    </Measure>
+    <Measure name="Average" column="count" aggregator="avg" visible="true">
+    </Measure>
+  </Cube>
+</Schema>
