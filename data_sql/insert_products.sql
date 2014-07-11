@@ -3,7 +3,7 @@ BEGIN;
 INSERT INTO product_master VALUES (1, 'Dry Cells (AA size)');
 INSERT INTO product_master VALUES (2, 'Dry Cells (AAA size)');
 INSERT INTO product_master VALUES (3, 'Dry Cells (C size)');
-INSERT INTO product_master VALUES (4, 'Instant noodle in cup (Saoy Sauce)');
+INSERT INTO product_master VALUES (4, 'Instant noodle in cup (Soy Sauce)');
 INSERT INTO product_master VALUES (5, 'Instant noodle in cup (Salty)');
 INSERT INTO product_master VALUES (6, 'Instant noodle in cup (Chili Tomato)');
 INSERT INTO product_master VALUES (7, 'Instant noodle in cup (Curry)');
