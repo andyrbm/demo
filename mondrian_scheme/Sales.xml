@@ -1,46 +1,50 @@
 <Schema name="Sales">
   <Cube name="Sales" visible="true" cache="false" enabled="true">
-    <Table name="sales_details" schema="public" alias="">
+    <Table name="sales_details" schema="public">
     </Table>
-    <Dimension type="StandardDimension" visible="true" foreignKey="no" name="Store">
+    <Dimension type="StandardDimension" visible="true" foreignKey="no" highCardinality="false" name="Store">
       <Hierarchy name="Store" visible="true" hasAll="true" primaryKey="no" primaryKeyTable="sales">
         <Join leftKey="store" rightKey="id">
-          <Table name="sales" schema="public" alias="">
+          <Table name="sales" schema="public">
           </Table>
-          <Table name="store_city" schema="public" alias="">
+          <Table name="store_city" schema="public">
           </Table>
         </Join>
-        <Level name="City" visible="true" table="store_city" column="no" nameColumn="city_name" uniqueMembers="false">
+        <Level name="City" visible="true" table="store_city" column="no" nameColumn="city_name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
         </Level>
-        <Level name="Store" visible="true" table="store_city" column="id" nameColumn="name" uniqueMembers="false">
+        <Level name="Store" visible="true" table="store_city" column="id" nameColumn="name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
         </Level>
       </Hierarchy>
     </Dimension>
-    <Dimension type="StandardDimension" visible="true" foreignKey="no" name="Member">
+    <Dimension type="StandardDimension" visible="true" foreignKey="no" highCardinality="false" name="Member">
       <Hierarchy name="Member" visible="true" hasAll="true" primaryKey="no" primaryKeyTable="sales">
-        <Join leftKey="member" rightAlias="" rightKey="id">
-          <Table name="sales" schema="public" alias="">
+        <Join leftKey="member" rightKey="id">
+          <Table name="sales" schema="public">
           </Table>
-          <Table name="customer_city" schema="public" alias="">
+          <Table name="customer_city" schema="public">
           </Table>
         </Join>
-        <Level name="CIty" visible="true" table="customer_city" column="no" nameColumn="city_name" uniqueMembers="false">
+        <Level name="CIty" visible="true" table="customer_city" column="no" nameColumn="city_name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
         </Level>
-        <Level name="Member" visible="true" table="customer_city" column="id" nameColumn="name" uniqueMembers="false">
+        <Level name="Member" visible="true" table="customer_city" column="id" nameColumn="name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
         </Level>
       </Hierarchy>
     </Dimension>
-    <Dimension type="StandardDimension" visible="true" foreignKey="product" name="Product">
+    <Dimension type="StandardDimension" visible="true" foreignKey="product" highCardinality="false" name="Product">
       <Hierarchy name="Product" visible="true" hasAll="true">
-        <Table name="product_master" schema="public" alias="">
+        <Table name="product_master" schema="public">
         </Table>
-        <Level name="Product" visible="true" column="id" nameColumn="name" uniqueMembers="false">
+        <Level name="Product" visible="true" column="id" nameColumn="name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
         </Level>
       </Hierarchy>
     </Dimension>
     <Measure name="Sum" column="count" aggregator="sum" visible="true">
     </Measure>
     <Measure name="Average" column="count" aggregator="avg" visible="true">
+    </Measure>
+    <Measure name="Count" column="no" aggregator="count" visible="true">
+    </Measure>
+    <Measure name="Distinct Count" column="no" aggregator="distinct-count" visible="true">
     </Measure>
   </Cube>
 </Schema>
