@@ -1,0 +1,191 @@
+このファイルは、PG-StromデモのためのPentaho CE環境を構築するためのメモです。
+このファイルの作成には細心の注意を払っていますが、誤りが含まれる場合もありますのでご注意ください。
+このファイルの内容を使用して生じた結果に、筆者は何ら責任を持たないものとします。
+
+なお、以下の手順では、基本的にPROXYの設定は省略していますので、ご注意ください。
+
+
+* インストールした環境
+
+使用した仮想環境 : VirtualBox 4.3.12
+
+OS : CentOS 6.5 Minimal (64bit)
+メモリ : 1536MB (※もっと多い方が良い)
+HDD : 50.0GB
+
+プロセッサー数 : 2 (※もっと多い方が良い)
+使用率制限 : 90
+
+(これ以外は、すべてデフォルトの設定)
+
+* インストール時の設定値
+
+言語設定 : Japanese (日本語)
+キーボード : 日本語
+ストレージデバイス : 基本ストレージデバイス
+ホスト名 : pentaho-demo.localdomain
+タイムゾーン : アジア/東京
+rootパスワード : pgstrom123
+パーティション : カスタムレイアウト
+  47GB(48128MB)を/(ext4)
+  3GBぐらい(残り：3071MB)をswap
+  両方とも基本パーティション
+
+ブートローダ : /dev/sdaにインストール　ブートローダパスワードは設定しない
+
+* インストール直後の起動後
+1. ネットワークが有効にならないので、/etc/sysconfig/network-scripts/ifcfg-eth0を編集
+
+ ONBOOT=no → yes
+ NM_CONTROLLED=yes → no
+
+2. 編集後、設定を適用する。
+# service network stop
+# service network start
+
+3. 最新のパッケージにアップデートする
+# yum check-update
+# yum update
+
+5. Pentahoの起動に支障が出るので、SELinuxを無効にする。
+/etc/selinux/configの以下の項目を編集する。
+SELINUX=enforcing → disabled
+
+6. カーネルのアップデートが入るので、reboot
+# reboot
+
+7. postgresとpentahoユーザを作成する
+# useradd -u 2000 -d /var/spool/postgres -s /sbin/nologin -U -M postgres
+# useradd -u 2001 -d /opt/pentaho-ce -s /sbin/nologin -U -M pentaho
+# mkdir /var/spool/postgres
+# chown postgres:postgres /var/spool/postgres
+# chmod 700 /var/spool/postgres
+# mkdir /opt/pentaho-ce
+# chown pentaho:pentaho /opt/pentaho-ce
+# chmod 700 /opt/pentaho-ce
+
+* PostgreSQLのインストール
+※ ここでは、kaigaiリポジトリに入っているものを使用します。
+
+1. gitが入っていなかったのでインストール
+# yum install git
+
+2. 必要なパッケージをインストールする
+# yum install make automake gcc zlib-devel.x86_64 readline-devel.x86_64 ncurses-devel.x86_64 gettext.x86_64 bison-devel.x86_64 flex.x86_64
+
+3. githubからダウンロードしてビルド・インストール
+# git clone https://github.com/kaigai/sepgsql.git
+# cd sepgsql
+# git checkout cache_scan
+# ./configure --enable-debug --enable-cassert --enable-nls --with-pam
+# make; make install
+
+4. PAM認証を有効にするために、以下の内容で/etc.pam.d/postgresqlを作成
+
+#%PAM-1.0
+auth            include         system-auth
+account         include         system-auth
+
+5. postgresユーザのパスワードを変更する
+# passwd postgres
+PASS : pgstrom123
+
+
+* PostgreSQLの起動とDB作成
+1. postgresユーザにsu
+# su - postgres -s /bin/bash
+2. パスを指定
+$ export PATH=$PATH:/usr/local/pgsql/bin
+3. データベース初期化
+$ initdb -E UTF-8 -U postgres -D ./pentaho-demo
+4. pentaho-demo/pg_hba.conf を以下のように編集
+
+# IPv4 local connections:
+host    all             all             127.0.0.1/32            trust → pam
+# IPv6 local connections:
+host    all             all             ::1/128                 trust → pam
+
+5. PosgreSQLを起動
+$ pg_ctl -D ./pentaho-demo start
+6. データベース作成
+$ createdb -E UTF-8 pentaho-demo
+
+
+* Pentaho CE(とJRE)のインストール
+1. wgetが入っていなかったので yum install wget
+2. su - pentaho -s /bin/bash
+3. wget "http://javadl.sun.com/webapps/download/AutoDL?BundleId=90216" -O jre-7u60-linux-x64.tar.gz
+4. wget "http://downloads.dourceforge.net/project/pentaho/Business%20Intelligence%20Server/5.0.1-stable/biserver-ce-5.0.1-stable.zip?use_mirror=jaist" -O biserver-ce-5.0.1-stable.zip
+5. tar xvzf jre-7u60-linux-x64.tar.gz
+6. unzip biserver-ce-5.0.1-stable.zip (これで、biserver-ce ディレクトリができる)
+7. export JAVA_HOME=/opt/pentaho-ce/jre1.7.0_60
+8. cd biserver-ce; ./start-pentaho.sh (これで、Pentaho CEが起動する)
+9. Pentaho CEのバージョンチェッカが云々のメッセージが表示されたら、そのままEnterで進める。(初回のみ表示される)
+
+* データの準備
+1. su - postgres -s /bin/bash
+2. git clone https://github.com/pg-strom/demo.git
+3. cd demo/data_generator
+4. make
+5. ./make_member > ~/member.tsv
+6. ./make_sales 10000 ~/sales.tsv ~/sales_details.tsv
+※ 上記の"10000"は、生成するデータ件数ですので、必要に応じて変更してください。
+
+7. cd ../data_sql
+8. psql -f demo_create_table.sql pentaho-demo
+9. psql -f insert_products.sql pentaho-demo
+10. psql -f insert_stores.sql pentaho-demo
+
+11. psql pentaho-demo
+12. (psql上で)copy member_customer from '/var/spool/postgres/member.tsv';
+13. (psql上で)copy sales from '/var/spool/postgres/sales.tsv';
+14. (psql上で)copy sales_details from '/var/spool/postgres/sales_details.tsv';
+
+* Pentaho CEの設定 (DB接続)
+※ CentOS 6.5 Minimalでは、X Windowとブラウザーがインストールされないので、ご注意ください。
+1. http://localhost:8080/ にアクセスする。
+
+2. Pentahoのログイン画面が表示されたら、以下でログインする。
+USER:admin PASS:password
+
+3. 画面の左上の方の "Manage Data Sources"をクリック
+4. 表示されたメニューの "+" をクリックする
+5. ドロップメニューの "JDBC" をクリック
+6. 以下の設定を行う
+Connection Name : Demo
+Database Type : PostgreSQL
+Access : Native (JDBC)
+Settings.Host Name : localhost
+Settings.Database Name : pentaho-demo
+Settings.Port Number : 5432
+Settings.User Name : postgres
+Settings.Password : pgstrom123
+
+7. 下の方の "Test" ボタンをクリック
+8. "Connection to database [Demo] is OK." と表示されれば成功。OKボタンで閉じる
+9. 元の画面で、OKボタンをクリックして閉じる。
+
+* Pentaho CEの設定 (Modrian Scheme)
+※ CentOS 6.5 Minimalでは、X Windowとブラウザーがインストールされないので、ご注意ください。
+1. ブラウザからアクセスできる場所に、Sales.xmlをダウンロードしておく。
+https://github.com/pg-strom/demo/raw/master/mondrian_scheme/Sales.xml
+
+2. http://localhost:8080/ にアクセスする。
+
+3. Pentahoのログイン画面が表示されたら、以下でログインする。
+USER:admin PASS:password
+
+4. 画面の左上の方の "Manage Data Sources"をクリック
+5. 表示されたメニューの "+" をクリックする
+6. ドロップメニューの "Analysis" をクリック
+7. 以下の設定を行う
+Mondrian File : ("..."をクリックして、Sales.xmlを選択)
+Select from available data sources. : Enable
+Manually enter data source parameter values. : Disable
+Data Source : Demo
+
+8. "Import"ボタンをクリック。
+9. 元の画面で、OKボタンをクリックして閉じる。
+
+
+以上で、構築は完了です。
