@@ -20,15 +20,22 @@ COMMIT;
 
 BEGIN;
 
-INSERT INTO city VALUES (1, 'Arm');
-INSERT INTO city VALUES (2, 'Bishop');
-INSERT INTO city VALUES (3, 'Cloud');
-INSERT INTO city VALUES (4, 'Denzel');
-INSERT INTO city VALUES (5, 'Effision');
-INSERT INTO city VALUES (6, 'Firebird');
-INSERT INTO city VALUES (7, 'George');
-INSERT INTO city VALUES (8, 'Henry');
-INSERT INTO city VALUES (9, 'Island');
-INSERT INTO city VALUES (10, 'John');
+INSERT INTO city VALUES (1, 1, 'Arm');
+INSERT INTO city VALUES (2, 1, 'Bishop');
+INSERT INTO city VALUES (3, 1, 'Cloud');
+INSERT INTO city VALUES (4, 1, 'Denzel');
+INSERT INTO city VALUES (5, 1, 'Effision');
+INSERT INTO city VALUES (6, 1, 'Firebird');
+INSERT INTO city VALUES (7, 2, 'George');
+INSERT INTO city VALUES (8, 2, 'Henry');
+INSERT INTO city VALUES (9, 2, 'Island');
+INSERT INTO city VALUES (10, 2, 'John');
+
+COMMIT;
+
+BEGIN;
+
+INSERT INTO pref VALUES (1, 'Cloudia');
+INSERT INTO pref VALUES (2, 'Georgia');
 
 COMMIT;

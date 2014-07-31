@@ -22,31 +22,31 @@ DROP TABLE IF EXISTS pref;
 -- Create Tables
 
 CREATE TABLE store (
-  id smallint PRIMARY KEY,
+  id smallint NOT NULL,
   name text NOT NULL,
   city smallint NOT NULL
 );
 
 CREATE TABLE product_master (
-  id smallint PRIMARY KEY,
+  id smallint NOT NULL,
   name text NOT NULL,
   price bigint NOT NULL,
   category smallint NOT NULL
 );
 
 CREATE TABLE category_small (
-  category smallint PRIMARY KEY,
+  category smallint NOT NULL,
   name text NOT NULL,
   super smallint NOT NULL
 );
 
 CREATE TABLE category_large (
-  category smallint PRIMARY KEY,
+  category smallint NOT NULL,
   name text NOT NULL
 );
 
 CREATE TABLE member_customer (
-  id smallint PRIMARY KEY,
+  id smallint NOT NULL,
   last_name text NOT NULL,
   first_name text NOT NULL,
   city smallint NOT NULL,
@@ -55,7 +55,7 @@ CREATE TABLE member_customer (
 );
 
 CREATE TABLE sales (
-  no bigint PRIMARY KEY,
+  no bigint NOT NULL,
   time timestamp NOT NULL,
   member smallint,
   store smallint NOT NULL,
@@ -65,24 +65,23 @@ CREATE TABLE sales (
 CREATE TABLE sales_details (
   no bigint NOT NULL,
   product smallint NOT NULL,
-  count int NOT NULL,
-  PRIMARY KEY(no, product)
+  count int NOT NULL
 );
 
 CREATE TABLE campaign (
-  id int PRIMARY KEY,
+  id int NOT NULL,
   name text NOT NULL,
   discount int NOT NULL
 );
 
 CREATE TABLE city (
-  no smallint PRIMARY KEY,
+  no smallint NOT NULL,
   pref smallint not null,
   name text not null
 );
 
 CREATE TABLE pref (
-  no smallint PRIMARY KEY,
+  no smallint NOT NULL,
   name text not null
 );
 
@@ -123,7 +122,7 @@ CREATE VIEW dim_customer_age AS
   DISTINCT ON (id, date)
    member_customer.id,
    sales.time::date as date,
-   date_part('year', age(sales.time::date, member_customer.birthday))::int as age
+   date_part('year', age(sales.time::date, member_customer.birthday)) as age
  FROM
   sales INNER JOIN member_customer ON sales.member = member_customer.id;
 
@@ -131,7 +130,7 @@ CREATE VIEW dim_product AS
  SELECT
   P.id,
   P.name,
-  p.price,
+  P.price,
   CS.category AS category_s,
   CS.name AS category_s_name,
   CL.category AS category_l,

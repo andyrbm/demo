@@ -1,12 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
+#include <string.h>
+#include <time.h>
 
 #include "rand_tools.h"
 
 #include "demo_limits.h"
 
-static char *f_name[] = {
+static char *f_name_m[] = {
 "Aaron",
 "Abel",
 "Abraham",
@@ -107,6 +109,10 @@ static char *f_name[] = {
 "Colin",
 "Conan",
 "Conrad",
+NULL /* Stopper */
+};
+
+char *f_name_f[] = {
 "Cordelia",
 "Corinna",
 "Courtney",
@@ -413,26 +419,61 @@ static char *l_name[] = {
 NULL /* Stopper */
 };
 
+static inline time_t get_birthday(time_t now) {
+  time_t result = (time_t)0;
+
+  /* Get time between 10 years and 43 years before */
+  result = now - (lrand() % (33 * 365 * 24 * 60 * 60));
+  result -= 10 * 365 * 24 * 60 * 60;
+
+  return result;
+}
+
 int main(int argc, char *argv[]) {
   int iter = 0;
-  int l_name_count = 0, f_name_count = 0;
+  int l_name_count = 0, f_name_count[2] = { 0, 0 };
   uint32_t count = 0;
   char *temp = NULL;
+
+  time_t now = (time_t)0, birthday = (time_t)0;
+  struct tm *ts = NULL;
+  char buf[100] = { '\0' };
 
   int check[CITY_MAX + 1] = { 0 };
 
   l_name_count = sizeof(l_name) / sizeof(char *) -1; /* Decrease for NULL */
-  f_name_count = sizeof(f_name) / sizeof(char *) -1; /* Decrease for NULL */
+  f_name_count[0] = sizeof(f_name_m) / sizeof(char *) -1; /* Decrease for NULL */
+  f_name_count[1] = sizeof(f_name_f) / sizeof(char *) -1; /* Decrease for NULL */
 
+  (void) time(&now);
   INIT_SRAND();
 
   for(iter = 0; iter < CUSTOMER_MAX; iter++) {
     int city = 0;
+    int gender = 0;
+
     do {
       city = (int)(round(abs(rand_exp((double)1.0) * 10.0))) + 1;
     } while (city > CITY_MAX);
-    printf("%d\t%s\t%s\t%d\n",
-      iter + 1, l_name[lrand() % l_name_count], f_name[lrand() % f_name_count], city);
+
+    memset(buf, '\0', sizeof(buf));
+    birthday = get_birthday(now);
+    ts = localtime(&birthday);
+    strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", ts);
+
+    gender = lrand() % 2;
+    if (gender) {
+      /* Male */
+      printf("%d\t%s\t%s\t%d\t%s\tM\n",
+        iter + 1, l_name[lrand() % l_name_count],
+        f_name_m[lrand() % f_name_count[0]], city, buf);
+    } else {
+      /* Female */
+      printf("%d\t%s\t%s\t%d\t%s\tF\n",
+        iter + 1, l_name[lrand() % l_name_count],
+        f_name_f[lrand() % f_name_count[1]], city, buf);
+    }
+
     check[city]++;
   }
 

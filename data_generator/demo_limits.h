@@ -10,4 +10,6 @@
 #define COUNT_MAX       5
 #define TOTAL_MAX       20
 
+#define INTERVAL_STD    8U
+
 #endif
