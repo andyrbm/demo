@@ -1,40 +1,62 @@
 <Schema name="Sales">
   <Cube name="Sales" visible="true" cache="false" enabled="true">
-    <Table name="sales_details" schema="public">
+    <Table name="fact_sales" schema="public">
     </Table>
-    <Dimension type="StandardDimension" visible="true" foreignKey="no" highCardinality="false" name="Store">
-      <Hierarchy name="Store" visible="true" hasAll="true" primaryKey="no" primaryKeyTable="sales">
-        <Join leftKey="store" rightKey="id">
-          <Table name="sales" schema="public">
-          </Table>
-          <Table name="store_city" schema="public">
-          </Table>
-        </Join>
-        <Level name="City" visible="true" table="store_city" column="no" nameColumn="city_name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+    <Dimension type="StandardDimension" visible="true" foreignKey="store" highCardinality="false" name="Store">
+      <Hierarchy name="Store" visible="true" hasAll="true" primaryKey="id">
+        <Table name="dim_store" schema="public">
+        </Table>
+        <Level name="Prefecture" visible="true" table="dim_store" column="pref_no" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
         </Level>
-        <Level name="Store" visible="true" table="store_city" column="id" nameColumn="name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        <Level name="City" visible="true" table="dim_store" column="city_no" nameColumn="city_name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="Store" visible="true" table="dim_store" column="id" nameColumn="name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
         </Level>
       </Hierarchy>
     </Dimension>
-    <Dimension type="StandardDimension" visible="true" foreignKey="no" highCardinality="false" name="Member">
-      <Hierarchy name="Member" visible="true" hasAll="true" primaryKey="no" primaryKeyTable="sales">
-        <Join leftKey="member" rightKey="id">
-          <Table name="sales" schema="public">
-          </Table>
-          <Table name="customer_city" schema="public">
-          </Table>
-        </Join>
-        <Level name="CIty" visible="true" table="customer_city" column="no" nameColumn="city_name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+    <Dimension type="StandardDimension" visible="true" foreignKey="member" highCardinality="false" name="Customer">
+      <Hierarchy name="Customer" visible="true" hasAll="true" primaryKey="id">
+        <Table name="dim_customer" schema="public">
+        </Table>
+        <Level name="Prefecture" visible="true" table="dim_customer" column="pref_no" nameColumn="pref_name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
         </Level>
-        <Level name="Member" visible="true" table="customer_city" column="id" nameColumn="name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        <Level name="CIty" visible="true" table="dim_customer" column="city_no" nameColumn="city_name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="Customer" visible="true" table="dim_customer" column="id" nameColumn="name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+      <Hierarchy name="Age" visible="true" hasAll="true" primaryKey="id">
+        <Table name="dim_customer_age" schema="public">
+        </Table>
+        <Level name="Age" visible="true" table="dim_customer_age" column="age" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+      <Hierarchy name="Gender" visible="true" hasAll="true" primaryKey="id">
+        <Table name="dim_customer" schema="public">
+        </Table>
+        <Level name="Gender" visible="true" column="gender" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
         </Level>
       </Hierarchy>
     </Dimension>
     <Dimension type="StandardDimension" visible="true" foreignKey="product" highCardinality="false" name="Product">
       <Hierarchy name="Product" visible="true" hasAll="true">
-        <Table name="product_master" schema="public">
+        <Table name="dim_product" schema="public">
         </Table>
+        <Level name="Category(Large)" visible="true" table="dim_product" column="category_l" nameColumn="category_l_name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="Category(Small)" visible="true" table="dim_product" column="category_s" nameColumn="category_s_name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
         <Level name="Product" visible="true" column="id" nameColumn="name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+    </Dimension>
+    <Dimension type="StandardDimension" visible="true" foreignKey="campaign" highCardinality="false" name="Campaign">
+      <Hierarchy name="Canpaign" visible="true" hasAll="true">
+        <Table name="campaign" schema="public">
+        </Table>
+        <Level name="Discount Rate" visible="true" table="campaign" column="discount" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="Campaign" visible="true" table="campaign" column="id" nameColumn="name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
         </Level>
       </Hierarchy>
     </Dimension>

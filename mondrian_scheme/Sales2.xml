@@ -1,0 +1,72 @@
+<Schema name="Sales2">
+  <Cube name="Sales_Denormalized" visible="true" cache="true" enabled="true">
+    <Table name="fact_dim_all" schema="public">
+    </Table>
+    <Dimension type="StandardDimension" visible="true" foreignKey="no" highCardinality="false" name="Customer">
+      <Hierarchy name="Customer" visible="true" hasAll="true" primaryKey="no">
+        <Table name="fact_dim_all" schema="public">
+        </Table>
+        <Level name="Prefecture" visible="true" column="s_pref_no" nameColumn="s_pref_name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="City" visible="true" column="s_city_no" nameColumn="s_city_name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="Customer" visible="true" column="member" nameColumn="member_name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+      <Hierarchy name="Age" visible="true" hasAll="true" primaryKey="no">
+        <Table name="fact_dim_all" schema="public">
+        </Table>
+        <Level name="Age" visible="true" column="c_age" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+      <Hierarchy name="Gender" visible="true" hasAll="true" primaryKey="no">
+        <Table name="fact_dim_all" schema="public">
+        </Table>
+        <Level name="Gender" visible="true" column="gender" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+    </Dimension>
+    <Dimension type="StandardDimension" visible="true" foreignKey="no" highCardinality="false" name="Campaign">
+      <Hierarchy name="Campaign" visible="true" hasAll="true">
+        <Table name="fact_dim_all" schema="public">
+        </Table>
+        <Level name="Discount Rate" visible="true" column="discount" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="Campaign" visible="true" column="campaign" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+    </Dimension>
+    <Dimension type="StandardDimension" visible="true" foreignKey="no" highCardinality="false" name="Product">
+      <Hierarchy name="Product" visible="true" hasAll="true">
+        <Table name="fact_dim_all" schema="public">
+        </Table>
+        <Level name="Category(Large)" visible="true" column="category_l" nameColumn="category_l_name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="Category(Small)" visible="true" column="category_s" nameColumn="category_s_name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="Product" visible="true" column="product" nameColumn="product_name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+    </Dimension>
+    <Dimension type="StandardDimension" visible="true" foreignKey="no" highCardinality="false" name="Store">
+      <Hierarchy name="Store" visible="true" hasAll="true">
+        <Table name="fact_dim_all" schema="public">
+        </Table>
+        <Level name="Prefetcure" visible="true" table="fact_dim_all" column="s_pref_no" nameColumn="s_pref_name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="City" visible="true" column="s_city_no" nameColumn="s_city_name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+        <Level name="Store" visible="true" column="store" nameColumn="store_name" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+        </Level>
+      </Hierarchy>
+    </Dimension>
+    <Measure name="Sum" column="count" aggregator="sum" visible="true">
+    </Measure>
+    <Measure name="Average" column="count" aggregator="avg" visible="true">
+    </Measure>
+    <Measure name="Count" column="count" aggregator="count" visible="true">
+    </Measure>
+    <Measure name="Distinct Count" column="count" aggregator="distinct-count" visible="true">
+    </Measure>
+  </Cube>
+</Schema>
