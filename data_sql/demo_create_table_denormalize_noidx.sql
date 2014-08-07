@@ -28,7 +28,6 @@ CREATE TABLE fact_dim_all (
   count integer NOT NULL,
   campaign integer,
   cp_name text,
-  discount integer,
-  PRIMARY KEY(no, product)
+  discount integer
 );
 
