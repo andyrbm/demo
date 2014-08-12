@@ -1,0 +1,20 @@
+--- pentaho-solutions/system/saiku/ui/css/saiku/src/styles.css.orig	2014-06-30 12:35:28.000000000 +0900
++++ pentaho-solutions/system/saiku/ui/css/saiku/src/styles.css	2014-07-25 16:56:44.000000000 +0900
+@@ -933,7 +933,9 @@
+ }
+ /** Workspace Results */
+ .workspace_results_info {
+-    color: #999999;
++    color: #DD0000;
++    font-weight : bold;
++    font-size : 320%;
+     padding-right: 20px;
+     overflow: hidden;
+ }
+@@ -1939,4 +1941,4 @@
+     margin: 0;
+     padding: 4px 10px 6px;
+     text-shadow: 1px 1px 0 #FFFFFF;
+-}
+\ No newline at end of file
++}
